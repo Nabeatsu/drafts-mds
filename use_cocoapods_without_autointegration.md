@@ -49,6 +49,9 @@ Pod installation complete! There are 18 dependencies from the Podfile and 37 tot
 
 ![https://gyazo.com/453e8b8bb45e9f0b93958c0cc4bec273](https://gyazo.com/453e8b8bb45e9f0b93958c0cc4bec273.png)
 
+### 自動で生成されていたCocoaPods周りのbuild Phaseの削除
+- [CP] Copy Pods Resources
+- [CP] Embed Pods Frameworks
 
 
 
