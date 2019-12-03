@@ -38,6 +38,16 @@ $ bundle exec pod init
 
 [Add libraries · Nabeatsu/use-cocoapods-without-autointegration@e0fc3b7](https://github.com/Nabeatsu/use-cocoapods-without-autointegration/commit/e0fc3b7f2f0539bd101e65d0a4bfa8c605196d1d)
 
+### Podfileの編集
+integrate_targetsをfalseにしてpod installするとGenerating Pods projectの後に`Skipping User Project Integration`と表示されました。
+
+```sh
+Generating Pods project
+Skipping User Project Integration
+Pod installation complete! There are 18 dependencies from the Podfile and 37 total pods installed.
+```
+
+![https://gyazo.com/453e8b8bb45e9f0b93958c0cc4bec273](https://gyazo.com/453e8b8bb45e9f0b93958c0cc4bec273.png)
 
 
 
