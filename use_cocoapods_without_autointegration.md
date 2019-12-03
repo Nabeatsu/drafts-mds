@@ -53,7 +53,9 @@ Pod installation complete! There are 18 dependencies from the Podfile and 37 tot
 - [CP] Copy Pods Resources
 - [CP] Embed Pods Frameworks
 
-
+### 変数定義
+PODS_ROOT = $(SRCROOT)/Pods
+PODS_CONFIGURATION_BUILD_DIR = $(PODS_ROOT)/Build/Release$(EFFECTIVE_PLATFORM_NAME)
 
 
 
