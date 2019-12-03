@@ -57,7 +57,9 @@ Pod installation complete! There are 18 dependencies from the Podfile and 37 tot
 PODS_ROOT = $(SRCROOT)/Pods
 PODS_CONFIGURATION_BUILD_DIR = $(PODS_ROOT)/Build/Release$(EFFECTIVE_PLATFORM_NAME)
 
+ここまででBuild Succeed
 
+ここからは手作業リンク
 
 
 
