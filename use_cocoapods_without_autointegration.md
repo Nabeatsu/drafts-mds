@@ -61,5 +61,20 @@ PODS_CONFIGURATION_BUILD_DIR = $(PODS_ROOT)/Build/Release$(EFFECTIVE_PLATFORM_NA
 
 ここからは手作業リンク
 
+## 手作業リンク
+
+ビルドは成功したので試しにViewControllerに一つimportしてみます。するとコンソールに以下が出力されアプリがクラッシュしました。
+
+```sh
+dyld: Library not loaded: @rpath/AutoScrollLabel.framework/AutoScrollLabel
+  Referenced from: /Users/hogehoge/Library/Developer/CoreSimulator/Devices/46A54D6F-4932-4513-9226-01F3301A77F0/data/Containers/Bundle/Application/C476FDF0-41FE-4F90-BABE-DEE7A9DDFDE1/use-cocoapods-without-autointegration.app/use-cocoapods-without-autointegration
+  Reason: image not found
+```
+
+ライブラリの実行ファイルをfileコマンドで見てみると
+```sh
+AutoScrollLabel: Mach-O 64-bit dynamically linked shared library x86_64
+```
+と出力されます。AutoScrollLabelはダイナミックフレームワークのようです。
 
 
