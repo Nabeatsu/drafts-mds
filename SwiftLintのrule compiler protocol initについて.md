@@ -1,4 +1,4 @@
-今業務で段階的に SwiftLint を導入しています。SwiftLint はコードの静的解析を行うツールで、定義された rule や custom rule を元にコードをチェックしてくれます。
+今業務で取り組んでいるプロジェクトで段階的に SwiftLint を導入しています。SwiftLint はコードの静的解析を行うツールで、定義された rule や custom rule を元にコードをチェックしてくれます。
 
 新規ではなく、途中参加の案件だったので最初は SwiftLint の rule を全て無効にしてちょっとした作業の切れ目の時間に別ブランチで一つずつ rule を有効にしながらコードを修正しています。
 
@@ -6,7 +6,7 @@ SwiftLint の rule 一覧は[SwiftLint/Rules.md](https://github.com/realm/SwiftL
 
 この rule に関する issue は以下です。
 
-- [Add compiler_protocol_init rule by marcelofabri · Pull Request #1101 · realm/SwiftLint https://github.com/realm/SwiftLint/pull/1101]
+- [Add compiler_protocol_init rule by marcelofabri · Pull Request #1101 · realm/SwiftLint](https://github.com/realm/SwiftLint/pull/1101)
 
 この rule を無効にしていないと`The initializers declared in compiler protocol shouldn't be called directly.`と警告が表示されます。
 
@@ -50,7 +50,7 @@ disabled_rules:
 
 Do not call this initializer directly で Swift のリポジトリを検索して見ると他にも多くの型のイニシャライザが同じ理由で直接呼ばないように明記してあることがわかります。
 
-https://gyazo.com/865b0551aec876db91a9f718cbdf892f
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2019/12/865b0551aec876db91a9f718cbdf892f.png" alt="" width="260" height="868" class="alignnone size-full wp-image-505922" />
 
 ドキュメントに明示してある、このことだけで SwiftLint のデフォルトな rule として有効になっているのは当然だなと思えるのですが`It is used by the compiler when you use an array literal.`この文言が何を意味しているのか自分の言葉で説明できなかったのでいまいち納得できませんでした。
 
@@ -161,9 +161,9 @@ let userDefinedString: UserDefinedString = "user defined" // 文字列リテラ�
 print(userDefinedString.value) // user defined
 ```
 
-このように ExpressibleBy で始まる protocol は準拠することでリテラルからの初期化が行えるようになります。初期化時に引数に String 型の値を渡すような型の初期化を extension を使って簡単にできたりするかもしれません。URL などがそうですが forced unwrapping しないといけなくなるので URL 型は厳しそうですね…
+このように ExpressibleBy で始まる protocol は準拠することでリテラルからの初期化が行えるようになります。初期化時に引数に String 型の値を渡すような型の初期化を extension を使って簡単にできたりするかもしれません。URL などがそうですが forced unwrap しないといけなくなるので URL 型は厳しそうですね…
 
-swift-evolution の proposal では`Literal Syntax Protocols`と書いていたので総称した呼び方はこれかもしれません。元々は`*LiteralConvertible`で`ExpressibleBy*Literal`にリネームされました。
+swift-evolution の proposal では`Literal Syntax Protocols`と書いていたので総称した呼び方はこれかもしれません。元々は`*LiteralConvertible`で `ExpressibleBy*Literal`にリネームされました。
 
 ## Compiler protocol
 
@@ -174,11 +174,11 @@ swift-evolution の proposal では`Literal Syntax Protocols`と書いていた�
 >
 > https://google.github.io/swift/
 
-compiler protocol のイニシャライザを明示的に呼んで良いのはレシーバが metatype variable である場合のみと記載されています。metatype は ある型のインスタンスの型情報を保持している Type metadata へのポインタです。
+compiler protocol のイニシャライザを明示的に呼んで良いのはレシーバが metatype variable である場合のみと記載されています。
 
 compiler protocol が何なのかは未だわからないままですが呼んではいけない理由はわかってきました。
 
-※ここからは Swift のソースコードやコンパイル時に生成される中間言語などから読み取ったことを記載します。このレイヤはまだビギナーなので誤りもあるかと思います。何かお気づきの際はコメントや SNS などでご指摘お願いします！
+※ここからは Swift のソースコードやコンパイル時に生成される中間言語などから読み取ったことを記載します。このレイヤはまだビギナーなので誤りもあるかと思います。何かお気づきの際はコメントや SNS などでご指摘お願いします。
 
 compiler protocol が何なのか調べるために ExpressibleBy で始まる protocol の定義場所を見てみました。Swift のリポジトリを clone して定義元を探してみると[swift/CompilerProtocols.swift](https://github.com/apple/swift/blob/e94361e642907675c8fce9248c6b5a39d01746b0/stdlib/public/core/CompilerProtocols.swift)が見つかります。
 
@@ -208,7 +208,7 @@ SIL については詳細に紹介してくださっている記事がたくさ�
 - [Swift の中間言語 SIL を読む その 1 - SIL に入門するための準備 – ukitaka – iOS 開発とかのメモ](https://blog.waft.me/2018/01/09/swift-sil-1/)
 - [Swift 中間言語の、ひとまず入り口手前まで - Qiita](https://qiita.com/es_kumagai/items/b0b123526329909ae2a2)
 
-SIL を読むために必要なことは[swift/SIL.rst](https://github.com/apple/swift/blob/master/docs/SIL.rst)にほぼ書いてあります。用語や各命令について詳細に解説がされています。
+SIL を読む時は[swift/SIL.rst](https://github.com/apple/swift/blob/master/docs/SIL.rst)を片手に読みます。用語や各命令について詳細に解説がされています。
 
 SIL を生成する swift ファイルの中身は先程自分で定義した型を定数に入れているだけの以下のコードです。
 
@@ -230,7 +230,7 @@ let userDefinedString: UserDefinedString = "user"
 
 sil はコマンドラインで生成できます。
 
-```sh
+```bash
 $ swiftc -emit-sil -parse-as-library int.swift -o int.sil
 ```
 
@@ -269,6 +269,18 @@ bb0:
   %9 = function_ref @$s11userdefined17UserDefinedStringV13stringLiteralACSS_tcfC : $@convention(method) (@owned String, @thin UserDefinedString.Type) -> @owned UserDefinedString // user: %10
 ```
 
-イニシャライザを call する前後も読むと string_literal から String 型を生成して、それを ExpressibleByString に準拠する際に実装したイニシャライザに対して metatype と一緒に apply して、UserDefinedString 型の値を生成しています。
+文字列リテラルの変換に代入するためにinit(stringLiteral:)を呼んでいます。Swiftで定義したprotocolのinitializerがコンパイラでも呼ばれていることがわかりました。
 
-↑ の部分を C++でどう実現しているかが知りたい
+## ここまでのまとめと今調べているところ
+
+SwiftLintのデフォルトで有効になっているruleに登場するcompiler protocol initはExpressibleBy~で始まるprotocolにconformする際に実装を要求されるinitializerのことでした。
+
+このprotocolはCompilerProtocol.swiftで定義されていて、ここで定義されているprotocolはコンパイラと共有される組み込みのprotocolと記載がありました。
+
+実際にSwiftコードがバイナリコードとして出力される過程で経由する中間表現を見ると、リテラルを具体的な型に変換する際にprotocolにconformする際に実装を要求されたinitializerが呼ばれていることがわかりました。
+
+この後は実際にどのようにSwiftで定義したinitialzierを呼んでいるのか、TypeCheckerがリテラルにたどり着いた後リテラルに対応するprotocolを探してinitialzerを呼び出す部分のコードを読みながら理解できればと思います。実際に読み始めましたがC++のコードは思った以上に読みづらく記事として書けるぐらい正確に読むにはまだまだ時間がかかりそう
+
+
+
+ここまでの説明で認識に誤りがあったり説明が不足しているようなところもあるかと思います。何かお気づきの際はコメントかTwitterなどでご指摘いただけるとありがたいです。
