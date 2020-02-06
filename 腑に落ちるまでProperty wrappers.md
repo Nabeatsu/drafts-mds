@@ -1,21 +1,18 @@
-
-
 わからないもののインターフェースを覚えて課題をを解決するのは大切なスキルだと思います。が、自分の興味のある領域ぐらいは腹落ちしているレベルで理解しておきたいのが正直な気持ちです。
 
-SwiftUIを一定期間触り続けていたのですが、SwiftUIとも関係が深いProperty wrappersのことをよくわかってないまま使っているのにそろそろ耐えられなくなってきたので、プロポーザルやドキュメントを調べて他の人の実装を読んで、自分でもProperty wrappersを使って玩具を実装していると少しずつ頭が整理されてきたので記事にしようと思います。
+SwiftUI を一定期間触り続けていたのですが、SwiftUI とも関係が深い Property wrappers のことをよくわかってないまま使っているのにそろそろ耐えられなくなってきたので、プロポーザルやドキュメントを調べて他の人の実装を読んで、自分でも Property wrappers を使って玩具を実装していると少しずつ頭が整理されてきたので記事にしようと思います。
 
+# 腑に落ちるまで Property wrappers
 
-# 腑に落ちるまでProperty wrappers
-
-プロパティを定義する際によく使うパターンがあります。Proposalでは`lazy`や`@NSCopying`のように個別のパターンをハードコーディングするよりも、これらのパターンを様々なライブラリのように定義できるよう提供されているより汎用的なメカニズムとしてProperty wrappersが提供されています。
+プロパティを定義する際によく使うパターンがあります。Proposal では`lazy`や`@NSCopying`のように個別のパターンをハードコーディングするよりも、これらのパターンを様々なライブラリのように定義できるよう提供されているより汎用的なメカニズムとして Property wrappers が提供されています。
 
 プロポーザルは以下です。
 
 - [swift-evolution/0258-property-wrappers.md at master · apple/swift-evolution](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md)
 
-## Property wrappersとwrappedValue
+## Property wrappers と wrappedValue
 
-最初の例として提示されているのは`lazy`です。プロパティがオプションとして公開されるのを避けるために使われることが多い遅延初期化はSwiftではプリミティブな言語機能として`lazy`キーワードが提供されています。これがなければ自ら多くのボイラープレートを記述しないといけません。
+最初の例として提示されているのは`lazy`です。プロパティがオプションとして公開されるのを避けるために使われることが多い遅延初期化は Swift ではプリミティブな言語機能として`lazy`キーワードが提供されています。これがなければ自ら多くのボイラープレートを記述しないといけません。
 
 ```swift
 struct HavingLazyProperty {
@@ -32,7 +29,7 @@ struct HavingLazyProperty {
 }
 ```
 
-他にもマルチフェーズでの初期化をサポートするために、一度値を割り当てられてからimmutableな`delayed`なプロパティを持つプロパティ実装パターンがあります。
+他にもマルチフェーズでの初期化をサポートするために、一度値を割り当てられてから immutable な`delayed`なプロパティを持つプロパティ実装パターンがあります。
 
 ```swift
 class Foo {
@@ -57,9 +54,9 @@ foo.initializedLater = "hoge"
 foo.initializedLater // 値を割り当てた後なのでエラーにならない
 ```
 
-プロポーザルに記載されていたクラス定義では、マルチフェーズでの初期化をImplicity unwrapped optionalで実現していますがこれは結果としてnull安全性を損なっています。
+プロポーザルに記載されていたクラス定義では、マルチフェーズでの初期化を Implicity unwrapped optional で実現していますがこれは結果として null 安全性を損なっています。
 
-個別の実装ケースに対してハードコーディングする手法に対して、Property wrappersを使用することでプロパティに関する処理を他の型に委譲することができます。プロパティの実装をプロパティに代わって行う`wrapper`を`@propertyWrapper`で指定します。
+個別の実装ケースに対してハードコーディングする手法に対して、Property wrappers を使用することでプロパティに関する処理を他の型に委譲することができます。プロパティの実装をプロパティに代わって行う`wrapper`を`@propertyWrapper`で指定します。
 
 引き続きプロポーザルに記載されているサンプルからコードを借用します。
 
@@ -97,9 +94,9 @@ extension Lazy {
 }
 ```
 
-Property Wrappersはwrapperとして使用するプロパティのストレージを提供します。`wrappedValue`プロパティはラッパーの実際の実装を提供ししてoptionの`init（wrappedValue :)`はプロパティのタイプの値からストレージの初期化を有効にします。
+Property Wrappers は wrapper として使用するプロパティのストレージを提供します。`wrappedValue`プロパティはラッパーの実際の実装を提供しして option の`init（wrappedValue :)`はプロパティのタイプの値からストレージの初期化を有効にします。
 
-また、`_`をプレフィックスに持つストレージのプロパティは自動で生成されますがprivateなので、内部からならアクセスできます。この`_foo`を使ってリセットするメソッドを試しに実装して使ってみます。
+また、`_`をプレフィックスに持つストレージのプロパティは自動で生成されますが private なので、内部からならアクセスできます。この`_foo`を使ってリセットするメソッドを試しに実装して使ってみます。
 
 ```swift
 class C {
@@ -117,7 +114,7 @@ c.reset()
 print(c.foo) // 0
 ```
 
-また、Property wrapperインスタンスは初期化引数を指定して値を渡すことで代入ではなく直接初期化できます。
+また、Property wrapper インスタンスは初期化引数を指定して値を渡すことで代入ではなく直接初期化できます。
 
 ```swift
 class C {
@@ -125,13 +122,11 @@ class C {
 }
 ```
 
+## Property wrappers と projectedValue
 
-## Property wrappersとprojectedValue
+Property wrappers では`wrappedValue`に加えて、`projectedValue`を定義することで追加の機能を API として公開できます。
 
-Property wrappersでは`wrappedValue`に加えて、`projectedValue`を定義することで追加の機能をAPIとして公開できます。
-
-projectedValueは`$`がプレフィックスになる点を除いて命名はwrappedValueと同様です。コード上で$で始まるプロパティを定義できないのでprojectedValueが定義したプロパティに干渉することはありません。
-
+projectedValue は`$`がプレフィックスになる点を除いて命名は wrappedValue と同様です。コード上で\$で始まるプロパティを定義できないので projectedValue が定義したプロパティに干渉することはありません。
 
 ```swift
 @propertyWrapper struct ForcedUpperCase {
@@ -157,11 +152,11 @@ user.name // YAMADA TARO
 user.$name // true
 ```
 
-## Property wrappersの制限事項
+## Property wrappers の制限事項
 
-プロポーザルのRestrictions on the use of property wrappersに列挙されているので原文を読みたい人はそちらをどうぞ。実際にやってみてどのようなエラーをIDEが表示するのか見てみました。
+プロポーザルの Restrictions on the use of property wrappers に列挙されているので原文を読みたい人はそちらをどうぞ。実際にやってみてどのようなエラーを IDE が表示するのか見てみました。
 
-- protocol内で宣言できない
+- protocol 内で宣言できない
 
 ```swift
 protocol P {
@@ -169,7 +164,7 @@ protocol P {
 }
 ```
 
-- `An instance property with a wrapper `をextensionで使用できない。
+- `An instance property with a wrapper`を extension で使用できない。
 
 ```swift
 extension User {
@@ -177,7 +172,7 @@ extension User {
 }
 ```
 
-- `An instance property with a wrapper `をenumで使用できない
+- `An instance property with a wrapper`を enum で使用できない
 
 ```swift
 enum Hoge {
@@ -186,7 +181,7 @@ enum Hoge {
 }
 ```
 
-- クラスで宣言された`A property with a wrapper`はoverrideできない
+- クラスで宣言された`A property with a wrapper`は override できない
 
 ```swift
 class ParentClass {
@@ -198,11 +193,11 @@ class SubClass: ParentClass {
 }
 ```
 
-- `A property with a wrapper`には@NSCopying、@NSManaged、weak、unownedキーワードなどをつけれない。
+- `A property with a wrapper`には@NSCopying、@NSManaged、weak、unowned キーワードなどをつけれない。
 
-- `A property with a wrapper`はgetterとsetterを持てない
+- `A property with a wrapper`は getter と setter を持てない
 
-持てたらProperty wrappersとは、ということになるのでこれはすんなり納得できるかもしれないです。
+持てたら Property wrappers とは、ということになるのでこれはすんなり納得できるかもしれないです。
 
 ```swift
 struct User {
@@ -214,8 +209,7 @@ struct User {
 }
 ```
 
-- Property Wrapper型とwrappedValueは同じアクセスコントロールを持つ必要がある。init(wrappedValue)を宣言した場合も同様
-
+- Property Wrapper 型と wrappedValue は同じアクセスコントロールを持つ必要がある。init(wrappedValue)を宣言した場合も同様
 
 ```swift
 @propertyWrapper struct ForcedUpperCase {
@@ -233,12 +227,55 @@ struct User {
 
 ```
 
-projectedValueを宣言した場合、または`init()`を宣言した場合も同じアクセスコントロールである必要があります。
+projectedValue を宣言した場合、または`init()`を宣言した場合も同じアクセスコントロールである必要があります。
 
-## ライブラリの実装から見る具体的なユースケース
+## 使い所
 
-### プロポーザルで想定されていたユースケースやProperty Wrappersを使った具体的な実装リンク集
+[SvenTiigi/ValidatedPropertyKit](https://github.com/SvenTiigi/ValidatedPropertyKit)というライブラリは`@ Validated` PropertyWrapper の初期化中に指定された`Validation`に基づいてバリデーションされて条件を満たさない場合に値は nil にしたり直前の値がバリデーションに成功したかどうかを取り出す`isValid`メソッドなどを提供したりしています。
 
+```swift
+ @Validated(.nonEmpty)
+ var username: String?
+
+ username = "Mr.Robot"
+ print($username.isValid) // true
+
+ username = ""
+ print($username.isValid) // false
+```
+
+ソースコードの実装を追うと`@propertyWrapper`つけた`Validated<Value: Optionalable>`のイニシャライザで`Validation<Value.Wrapped>`型の定数 validation を初期化してバリデーションを行っています。複数のバリデーションを行えるように`&&`や`||`の実装も行われています。where 句をつけて extension を生やせば特定の型に対してカスタマイズしたバリデーションを行うこともできるようです。
+
+以下のコードは`Value`が Comparable に conform している時に比較して比較対象未満の時に失敗とする`Validation`を返す static メソッドを実装している部分です。ユーザー定義の型にたいするバリデーションも extension で実装できて使い所があれば便利そうです。
+
+```swift
+public extension Validation where Value: Comparable {
+
+    /// Validation with less `<` than comparable value
+    ///
+    /// - Parameter comparableValue: The Comparable value
+    /// - Returns: The Validation
+    static func less(_ comparableValue: Value) -> Validation {
+        return .init { value in
+            if value < comparableValue {
+                return .success
+            } else {
+                return .failure("\(value) is not less than \(comparableValue)")
+            }
+        }
+    }
+}
+```
+
+その他にもプロポーザルでは遅延初期化、不可分操作、UserDefaults への CRUD、CoW などの実装が Property wrappers の具体的なユースケースとして紹介されていました。
+
+## まとめ
+
+Property wrappers についてぼんやりとした理解だったのが、プロポーザルを読むことから始めてライブラリのコードを読んだりしているとだんだん頭が整理されてきた気がします。
+
+UserDefaults の利用を Property wrappers を使って手軽にするのはやってみたいと思ったので記事を書いた後にこんなもの([Nabeatsu/UserDefaultsWrapper](https://github.com/Nabeatsu/UserDefaultsWrapper))を作り始めました。
+
+まだ記事として利用するには機能も汎用性も足りないので、飽きずに形にできたら改めて記事にしようと思います。
 
 ## 参考
 
