@@ -18,7 +18,7 @@ MediaQuery を使って画面の範囲を調べて child ウィジェットを�
 
 ListView を使って Text をリスト表示してみます。
 
-```dart
+```art
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -54,7 +54,7 @@ class SafeAreaSample extends StatelessWidget {
 
 ![1-1](images/1-1.png)
 
-```dart
+```
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -104,7 +104,7 @@ Scaffold の body ではなくウィジェットツリーの内部で使うと�
 
 試してみます。
 
-```dart
+```
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -160,7 +160,7 @@ class SafeAreaSample extends StatelessWidget {
 
 ![1-7](images/1-7.png)
 
-```dart
+```
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -228,7 +228,7 @@ Scaffold の body 以下のウィジェットにいくつか SafeArea を入れ�
 
 それぞれ該当の箇所への`system intrusions`を回避するかどうかを表しています。実際に使ってみます。
 
-```dart
+```
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -273,7 +273,7 @@ class SafeAreaSample extends StatelessWidget {
 
 デフォルト値は true で、ソースコードを見るとそれが確認できます。
 
-```dart
+```
 class SafeArea extends StatelessWidget {
   /// Creates a widget that avoids operating system interfaces.
   ///
@@ -309,7 +309,7 @@ left に false を渡すと表示が変わります。
 
 画面下部に TextField をおいて maintainBottomViewPadding プロパティを切り替えてみます。SafeArea の bottom は true です。
 
-```swift
+```
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
