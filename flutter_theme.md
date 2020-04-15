@@ -192,3 +192,134 @@ ListTileはタスク一覧画面で使用しています。チェックボック
 
 
 ## ダークモード対応
+
+Flutterでダークモード対応を行う時はMaterialAppのコンストラクタ引数darkThemeに値を指定します。
+
+```dart
+Widget build(BuildContext context) {
+  return ChangeNotifierProvider(
+    create: (context) => TaskData(),
+    child: MaterialApp(
+      home: TasksScreen(),
+      theme: kLightThemeData,
+      darkTheme: kDarkThemeData, // ダークテーマ用のThemeDataを指定する
+    ),
+  );
+}
+```
+
+それでも固定でColorを指定していたWidgetの色はこれでも切り替わらないので、そこは`Theme.of`で取り出して任意の色やstyleを指定していく必要があります。
+
+ライトモード
+
+![4-7](images/4-7.png)
+
+![4-8](images/4-8.png)
+
+![4-9](images/4-9.png)
+
+ダークモード
+
+![4-10](images/4-10.png)
+
+![4-11](images/4-11.png)
+
+![4-12](images/4-12.png)
+
+
+
+## Theme.ofで取得したThemeDataから取り出したプロパティの値をカスタマイズしたい時
+
+通常は
+
+```dart
+Theme.of(context).textTheme.body1
+```
+
+このような感じで必要な値を取り出していけば良いと思いますが、どうしても基本的なスタイルは踏襲しつつも色だけ変えたい等細かいカスタマイズはしたい、でも変えたいのは数箇所で全体としてのスタイルを変えたいわけじゃないというようなことがあります。
+
+```dart
+ThemeData kLightThemeData = ThemeData.light().copyWith(
+  primaryColor: Colors.cyan, // ここで変更した場合は当然子WidgetでprimaryColorを取り出したら`Colors.cyan`で返ってくる
+  backgroundColor: Colors.white,
+);
+```
+
+そのような時に使うメソッドがmerge()、apply()、そして上のコードで使用しているcopyWith()です。この記事を書くまではcopyWith()しか知りませんでした。
+
+実際のコードです。
+
+以下のTextは画面の見出しに相当するエリアのWidgetです。
+
+```dart
+Text(
+  'ToDo List',
+  style: TextStyle(
+    color: Theme.of(context).textTheme.title.color,
+    fontSize: 50.0,
+    fontWeight: FontWeight.w700,
+  ),
+)
+```
+
+merge()を使うとthemeのマージ元をマージ先で上書きして返します。このメソッドのソースを見ると、TextTheme.inheritプロパティの値で挙動が変わる旨が記載されています。inheritプロパティはnull値は祖先のTextTheme（TextSpanツリーなど）の値に置き換えられるかどうかを表します。
+
+- [inherit property - TextStyle class - painting library - Dart API](https://api.flutter.dev/flutter/painting/TextStyle/inherit.html)
+
+これがfalseの場合、明示的な値を持たないプロパティはデフォルトの値がセットされます。
+
+これを踏まえた上でmerge メソッドのドキュメントを見てみます。
+
+- [merge method - TextStyle class - painting library - Dart API](https://api.flutter.dev/flutter/painting/TextStyle/merge.html)
+
+
+引数に指定されたTextStyleのinheritプロパティががtrueに設定されている場合、引数に指定されたTextStyleの値がnullのプロパティの値が呼び出し元のnullでないプロパティの値に置き換わります。
+
+一方falseが指定されている場合は、引数に指定されたTextStyleは変更されません。
+
+> The other style does not inherit properties of this style.
+
+と記載されています。otherは引数に渡されたTextStyleです。
+
+以下のように使います。
+
+```dart
+Text(
+  'ToDo List',
+  style: Theme.of(context).textTheme.headline.merge(TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 35.0,
+      )),
+);
+```
+
+mergeメソッドとの使い分けについてもドキュメントに記載があります。2つのTextThemesのすべてのフィールドをマージするのではなく、TextThemeの個々のフィールドをオーバーライドする場合は、copyWithがmergeの代わりに使用されます。
+
+> copyWith is used instead of merge when you wish to override individual fields in the TextTheme instead of merging all of the fields of two TextThemes.
+
+また、applyメソッドはそれぞれのフィールドに引数に与えられた設定を適用して新たなTextStyleを返します。
+
+非数値の引数に関しては与えられた値に置き換えられてTextThemeを返します。数値の引数に関してはapplyのドキュメントに以下のように記載されています。
+
+> The numeric properties are multiplied by the given factors and then incremented by the given deltas.
+
+例えばfontSizeに関する引数fontSizeFactorとfontSizeDeltaに値を渡してapplyを呼び出した場合(例: `style.apply(fonSizeFactor: 2.0, fontSizeDelta: 1.0)`)とした場合は`style.fontSize * fontSizeFactorに指定された2.0 + fontSizeDeltaに指定された1.0`になります。
+
+applyがreplaceとapplyの中のロジックに基づいて値が適用されて新たなTextStyleが返されるのに対してcopyWithは単純に与えられた値に置き換えられるだけなので、要件に応じて使い分けられそうです。
+
+この記事を書こうとするまで直接指定したり使ったとしてもcopyWithぐらいだったので良い勉強になりました。
+
+## まとめ
+
+Themeについてここまで書いてきました。でもまだThemeDataのプロパティのどこを変えるとどう変わるか把握しきれいていない部分があります。
+
+そのために良さそうな[rxlabz/panache: 🎨 Flutter Material Theme editor](https://github.com/rxlabz/panache)というツールがあります。実際のアプリケーションではベースのThemeからcopyWithで個別にカスタマイズするのがマテリアルデザインに乗っかれて良さそうだなと思っているのですが各プロパティの理解を深めたいので触ってみたいと思います。触れたら記事にするつもりです。
+
+最後になりますが、なるべく丁寧に記事を書いたつもりですが誤りや認識のズレがあるかもしれません。その際はコメントにてお気軽にご指摘ください。修正させていただきます。
+
+## 参考にした記事
+
+- [Use themes to share colors and font styles - Flutter](https://flutter.dev/docs/cookbook/design/themes)
+- [Flutter: Apply style as a Theme in a Text widget - Flutter Community - Medium](https://medium.com/flutter-community/flutter-apply-style-as-a-theme-in-a-text-widget-90268328bd23)
+- [FlutterのThemeを理解する](https://itome.team/blog/2019/12/flutter-advent-calendar-day12/)
+- [Flutterでアプリ全体を統一感のあるデザインにする方法 - Qiita](https://qiita.com/sekitaka_1214/items/e25f2f3b282b0ff382cf)
