@@ -1,7 +1,4 @@
-# FlutterのThemeについて
-
-CX事業本部の田辺です。少し前にFlutterのThemeクラスを理解したいと思って周辺のドキュメントを流し読みしていました。今回はもう一度ドキュメントを読み込み手元で動かして挙動を確認した内容を記事にします。
-
+CX事業本部の田辺です。Themeについてドキュメントを読み手元で動かしたりダークモードに対応させたりしながら学んだ内容を記事にします。
 
 ## Theme とは
 
@@ -11,17 +8,19 @@ CX事業本部の田辺です。少し前にFlutterのThemeクラスを理解し
 
 手元に最低限の機能を持ったToDoアプリがあります。このアプリのコードはThemeを使っておらず、個別にスタイルを指定しています。
 
-![4-1](images/4-1.png)
 
-![4-2](images/4-2.png)
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-1.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557810" />
 
-統一感を持たせるかは個別のスタイルの指定次第です。
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-2.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557811" />
+
+
+統一感を持たせるかは現状だと個別のスタイルの指定次第です。
 
 このアプリにThemeを使ってみます。
 
 基本的にThemeはMaterialAppのコンストラクタ引数themeにThemeDataを指定することでアプリ全体にテーマが適用されます。
 
-```dart
+```
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,9 +43,9 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-を以下のようにします。
+上記のコードを以下のようにします。
 
-```dart
+```
 class MyApp extends StatelessWidget {
   final String data = "Top Secret Data";
   @override
@@ -65,19 +64,19 @@ class MyApp extends StatelessWidget {
 
 #### ThemeDataについて
 
-ThemeDataを指定しますがここまでThemeDataに関する説明を行ってません。そこでまずはThemeDataとは何か、どのような役割を持ったクラスなのかを紹介します。
+ThemeDataはマテリアルデザインのテーマの色とtypographyを保持します。現在のテーマを取得するには、Theme.ofを使用します。
 
 ドキュメントは以下になります。
 
 - [ThemeData class - material library - Dart API](https://api.flutter.dev/flutter/material/ThemeData-class.html)
 
-マテリアルデザインのテーマの色と文字表現のデザイン処理(タイポグラフィと表現されてます)を保持します。現在のテーマを取得するには、Theme.ofを使用します。
 
-ThemeDataの各プロパティに値をコンストラクタ経由でセットすることでスタイルの微調整ができます。
+
+ThemeDataの各プロパティに値をコンストラクタ経由でセットすることでスタイルの調整ができます。
 
 ThemeDataのソースコードを読むとfactory Constructorが定義されています。コンストラクタ引数には`@required`がついていないので省略可能です。省略された場合はFlutter側で値をセットしてくれます。使用者は適宜変えたい所だけ変更すれば良いだけです。少しだけコードを貼ります。長いので省略してかつコメントを挿入しています。
 
-```dart
+```
 factory ThemeData({
     Brightness brightness,
     MaterialColor primarySwatch,
@@ -129,7 +128,7 @@ ThemeDataのプロパティはかなりたくさんあるのでデフォルト�
 
 MaterialAppのTHemeに指定しても直接色を指定している部分はThemeが反映されません。
 
-```dart
+```
 @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -150,19 +149,21 @@ MaterialAppのTHemeに指定しても直接色を指定している部分はThem
 ```
 
 
-ListTileはタスク一覧画面で使用しています。チェックボックスに直接色を指定しているのでこれを削除します。
+ListTileはタスク一覧画面で使用しています。チェックボックスに直接色を指定しているのでこれを削除します。するとMaterialAppのコンストラクタで指定したThemeに基づいてスタイルが設定されます。チェックボックスのスタイルが変更されているのが確認できます。
 
 削除前
-![4-3](images/4-3.png)
+
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-3.png" alt="" width="494" height="906" class="alignnone size-full wp-image-557812" />
 
 削除後
-![4-4](images/4-4.png)
+
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-4.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557813" />
 
 自動で各Widgetで設定される色やスタイルでなく設定したThemeData由来ではあるものの少しカスタマイズしたい場合があります。そのような時は冒頭に記載したようにTHeme.of(context)で共通のThemeDataを取得してプロパティを利用します。
 
 今回はTheme.ofで取り出したつつこれまでどおりチェックが入った時は取り消し線が入るようにdecorationプロパティをカスタマイズしたりフォントサイズを変更したりするため`copyWith()`を使います。
 
-```dart
+```
  @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -185,10 +186,13 @@ ListTileはタスク一覧画面で使用しています。チェックボック
 
 
 変更前
-![4-5](images/4-5.png)
+
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-5.png" alt="" width="494" height="906" class="alignnone size-full wp-image-557814" />
 
 変更後
-![4-6](images/4-6.png)
+
+
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-6.png" alt="" width="494" height="906" class="alignnone size-full wp-image-557815" />
 
 
 ## ダークモード対応
@@ -212,46 +216,39 @@ Widget build(BuildContext context) {
 
 ライトモード
 
-![4-7](images/4-7.png)
 
-![4-8](images/4-8.png)
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-7.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557816" />
 
-![4-9](images/4-9.png)
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-8.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557817" />
+
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-9.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557818" />
 
 ダークモード
 
-![4-10](images/4-10.png)
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-10.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557819" />
 
-![4-11](images/4-11.png)
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-11.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557820" />
 
-![4-12](images/4-12.png)
-
+<img src="https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2020/04/4-12.png" alt="" width="538" height="950" class="alignnone size-full wp-image-557821" />
 
 
 ## Theme.ofで取得したThemeDataから取り出したプロパティの値をカスタマイズしたい時
 
 通常は
 
-```dart
+```
 Theme.of(context).textTheme.body1
 ```
 
 このような感じで必要な値を取り出していけば良いと思いますが、どうしても基本的なスタイルは踏襲しつつも色だけ変えたい等細かいカスタマイズはしたい、でも変えたいのは数箇所で全体としてのスタイルを変えたいわけじゃないというようなことがあります。
 
-```dart
-ThemeData kLightThemeData = ThemeData.light().copyWith(
-  primaryColor: Colors.cyan, // ここで変更した場合は当然子WidgetでprimaryColorを取り出したら`Colors.cyan`で返ってくる
-  backgroundColor: Colors.white,
-);
-```
-
-そのような時に使うメソッドがmerge()、apply()、そして上のコードで使用しているcopyWith()です。この記事を書くまではcopyWith()しか知りませんでした。
+そのような時はmerge()、apply()、そして上のコードで使用しているcopyWith()などの呼び出し元のStyleから新しいStyle（TextStyle）を返すメソッドが役に立つかもしれません。
 
 実際のコードです。
 
 以下のTextは画面の見出しに相当するエリアのWidgetです。
 
-```dart
+```
 Text(
   'ToDo List',
   style: TextStyle(
@@ -268,7 +265,7 @@ merge()を使うとthemeのマージ元をマージ先で上書きして返し�
 
 これがfalseの場合、明示的な値を持たないプロパティはデフォルトの値がセットされます。
 
-これを踏まえた上でmerge メソッドのドキュメントを見てみます。
+これを踏まえた上で merge メソッドのドキュメントを見てみます。
 
 - [merge method - TextStyle class - painting library - Dart API](https://api.flutter.dev/flutter/painting/TextStyle/merge.html)
 
@@ -283,7 +280,7 @@ merge()を使うとthemeのマージ元をマージ先で上書きして返し�
 
 以下のように使います。
 
-```dart
+```
 Text(
   'ToDo List',
   style: Theme.of(context).textTheme.headline.merge(TextStyle(
@@ -293,7 +290,7 @@ Text(
 );
 ```
 
-mergeメソッドとの使い分けについてもドキュメントに記載があります。2つのTextThemesのすべてのフィールドをマージするのではなく、TextThemeの個々のフィールドをオーバーライドする場合は、copyWithがmergeの代わりに使用されます。
+mergeとcopyWithの使い分けについてもドキュメントに記載があります。2つのTextThemesのすべてのフィールドをマージするのではなく、TextThemeの個々のフィールドをオーバーライドする場合は、copyWithを使用します。
 
 > copyWith is used instead of merge when you wish to override individual fields in the TextTheme instead of merging all of the fields of two TextThemes.
 
@@ -303,19 +300,19 @@ mergeメソッドとの使い分けについてもドキュメントに記載が
 
 > The numeric properties are multiplied by the given factors and then incremented by the given deltas.
 
-例えばfontSizeに関する引数fontSizeFactorとfontSizeDeltaに値を渡してapplyを呼び出した場合(例: `style.apply(fonSizeFactor: 2.0, fontSizeDelta: 1.0)`)とした場合は`style.fontSize * fontSizeFactorに指定された2.0 + fontSizeDeltaに指定された1.0`になります。
+例えばfontSizeに関する引数fontSizeFactorとfontSizeDeltaに値を渡してapplyを呼び出した場合(例: `style.apply(fonSizeFactor: 2.0, fontSizeDelta: 1.0)`)は`style.fontSize * fontSizeFactorに指定された2.0 + fontSizeDeltaに指定された1.0`になります。
 
-applyがreplaceとapplyの中のロジックに基づいて値が適用されて新たなTextStyleが返されるのに対してcopyWithは単純に与えられた値に置き換えられるだけなので、要件に応じて使い分けられそうです。
-
-この記事を書こうとするまで直接指定したり使ったとしてもcopyWithぐらいだったので良い勉強になりました。
+applyがreplaceとapplyの中のロジックに基づいて値が適用されて新たなTextStyleが返されるのに対してcopyWithは単純に与えられた値に置き換えられます。要件に応じてそれぞれのメソッドを使い分けられそうです。
 
 ## まとめ
 
-Themeについてここまで書いてきました。でもまだThemeDataのプロパティのどこを変えるとどう変わるか把握しきれいていない部分があります。
+Themeについてここまで書いてきました。しかしプロパティの数が非常に多いこともあり未だThemeDataのプロパティのどこを変えるとどう変わるか全て把握できたわけではありません。
 
 そのために良さそうな[rxlabz/panache: 🎨 Flutter Material Theme editor](https://github.com/rxlabz/panache)というツールがあります。実際のアプリケーションではベースのThemeからcopyWithで個別にカスタマイズするのがマテリアルデザインに乗っかれて良さそうだなと思っているのですが各プロパティの理解を深めたいので触ってみたいと思います。触れたら記事にするつもりです。
 
-最後になりますが、なるべく丁寧に記事を書いたつもりですが誤りや認識のズレがあるかもしれません。その際はコメントにてお気軽にご指摘ください。修正させていただきます。
+最後になりますが、なるべく丁寧に記事を書いたつもりですが、Flutterの学習を始めたばかりということもあり誤りや認識に間違いがあるかもしれません。なにかお気づきの際はコメントにてお気軽にご指摘ください。修正させていただきます。
+
+最後まで読んでいただきありがとうございました。
 
 ## 参考にした記事
 
