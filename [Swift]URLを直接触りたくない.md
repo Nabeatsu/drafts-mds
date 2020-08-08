@@ -1,0 +1,3 @@
+- URLComponents(Builder pattern)
+- extensionでのfactory patttern
+- 

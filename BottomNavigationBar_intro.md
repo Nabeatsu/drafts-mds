@@ -164,7 +164,9 @@ onTap のタイミングで PageController の animateToPage メソッドでペ�
 
 ## BottomNavigationBar を使用した場合の Push 遷移で下タブを残したまま遷移したい時
 
-CupertinoTabBar、CupertinoTabScaffold を使うべき
+BottomNavigationBar を使った Push 遷移は BottomNavigationBar が隠れてしまいます。Material Design 的にはその動きで問題ないらしいのですが残したまま Push 遷移したいこともあります。iOS アプリの場合は特にそうだと思います。
+
+その際は公式に提供されている CupertinoTabScaffold を使うのが良いです。
 
 ※参考
 
@@ -172,8 +174,25 @@ CupertinoTabBar、CupertinoTabScaffold を使うべき
 
 - [Keep BottomNavigationBar When Push to New Screen with Navigator · Issue #16181 · flutter/flutter](https://github.com/flutter/flutter/issues/16181)
 
-## provider + BottomNavigationBar
+BottomNavigationBar で同じ動きを実装するワークアラウンドもあります。写経して試しましたが動いた時は感動したもののここまでするなら公式の Widget に乗っかりたいなとも思いました。写経のため自分が書いたような語り口で紹介するのも気が引けるので手順のみ載せて参考記事とリポジトリを紹介します。
+
+- Navigator.of で BottomNavigationBar の祖先の Navigator を context から見つけてしまう
+- Navigator.of で BottomNavigationBar の祖先に当たらない Navigator を見つけるように Navigator を内包するカスタムウィジェット内に Push の処理を記述する
+- Navigator の識別のために GlobalKey を使う
+- 下タブのタップ時の動きは Stack を使って表示する画面一覧を保持して Offstage を使って任意のタブを Offstage（見えないよう）にして実現する
+
+この実装について紹介した記事は以下になります。
+
+- [Flutter Case Study: Multiple Navigators with BottomNavigationBar https://medium.com/coding-with-flutter/flutter-case-study-multiple-navigators-with-bottomnavigationbar-90eb6caa6dbf]
+
+リポジトリは以下。
+
+- [bizz84/nested-navigation-demo-flutter: Nested navigation with BottomNavigationBar](https://github.com/bizz84/nested-navigation-demo-flutter)
+
+## BottomNavigationBar の状態管理
 
 状態管理に推奨されている provider というライブラリを使って画面遷移を管理してみた実装です。外部ライブラリを使っているので codepen 埋め込みではないです。
 
 <script src="https://gist.github.com/Nabeatsu/f4642f723f49648a2692b6ad7cd18c55.js"></script>
+
+int でやりくりしたくない気持ちもあったので BottomNavigationBar をラップしたカスタムウィジェットを使って実装したのが以下です。
